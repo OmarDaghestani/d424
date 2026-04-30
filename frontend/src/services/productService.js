@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Use the environment variable first, fallback to localhost for development
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+import { API_URL } from '../config.js';
 
 // Fetch all products with optional query parameters
 export const fetchProducts = async (query = '') => {

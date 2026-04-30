@@ -1,26 +1,47 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { fetchProductById } from '../services/productService';
-import { createOrder } from '../services/orderService'; // Import the order creation service
+import React, { useEffect, useState, useMemo } from "react";
+import { Link, useParams } from "react-router-dom";
+import { fetchProductById } from "../services/productService";
+import { createOrder } from "../services/orderService";
+import { ProductSpecs } from "../components/ProductSpecs";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
+
+const formatSpecifications = (specs) => {
+  if (!specs) return {};
+  return specs instanceof Map ? Object.fromEntries(specs) : specs;
+};
 
 const ProductPage = () => {
-  const { id } = useParams(); // Get the product ID from the URL
+  const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [quantity, setQuantity] = useState(1); // State to manage quantity
-  const [orderSuccess, setOrderSuccess] = useState(false); // State to track order success
+  const [loadError, setLoadError] = useState("");
+  const [orderError, setOrderError] = useState("");
+  const [quantity, setQuantity] = useState(1);
+  const [orderSuccess, setOrderSuccess] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+
+  const productForSpecs = useMemo(() => {
+    if (!product) return null;
+    return {
+      ...product,
+      specifications: formatSpecifications(product.specifications),
+    };
+  }, [product]);
 
   useEffect(() => {
     const loadProduct = async () => {
       setLoading(true);
-      setError('');
+      setLoadError("");
+      setOrderError("");
+      setOrderSuccess(false);
 
       try {
         const data = await fetchProductById(id);
         setProduct(data);
-      } catch (err) {
-        setError('Failed to load product details.');
+        const max = Math.max(0, data.stock ?? 0);
+        setQuantity(max > 0 ? Math.min(1, max) : 1);
+      } catch {
+        setLoadError("Failed to load product details.");
       } finally {
         setLoading(false);
       }
@@ -29,110 +50,225 @@ const ProductPage = () => {
     loadProduct();
   }, [id]);
 
+  useDocumentTitle(product?.name || "Product");
+
+  const stock = product?.stock ?? 0;
+  const maxQty = Math.max(0, stock);
+
+  const clampQuantity = (raw) => {
+    const n = parseInt(String(raw), 10);
+    if (Number.isNaN(n) || n < 1) return 1;
+    if (maxQty > 0) return Math.min(n, maxQty);
+    return n;
+  };
+
+  const handleQuantityChange = (e) => {
+    setQuantity(clampQuantity(e.target.value));
+  };
+
   const handleOrderNow = async () => {
+    if (!product || stock < 1) return;
+    setOrderError("");
+    setOrderSuccess(false);
+    setSubmitting(true);
+
     try {
+      const qty = clampQuantity(quantity);
       const orderData = {
         orderItems: [
           {
             name: product.name,
-            quantity,
+            quantity: qty,
             price: product.price,
             product: product._id,
           },
         ],
         shippingAddress: {
-          address: '123 Main St',
-          city: 'Springfield',
-          postalCode: '12345',
-          country: 'USA',
+          address: "123 Main St",
+          city: "Springfield",
+          postalCode: "12345",
+          country: "USA",
         },
-        paymentMethod: 'PayPal',
-        totalPrice: quantity * product.price,
+        paymentMethod: "PayPal",
+        totalPrice: qty * product.price,
       };
 
-      await createOrder(orderData); // Call the backend to create an order
+      await createOrder(orderData);
       setOrderSuccess(true);
     } catch (err) {
-      console.error('Failed to create order:', err);
-      setError('Failed to create order.');
+      console.error("Failed to create order:", err);
+      setOrderError(
+        err?.response?.data?.message ||
+          err?.message ||
+          "Failed to create order. Please sign in and try again."
+      );
+    } finally {
+      setSubmitting(false);
     }
   };
 
-  if (loading)
+  if (loading) {
     return (
-      <div className="container has-text-centered mt-5">
-        <h1 className="title">Loading product details...</h1>
-        <div className="loader"></div> {/* Optional spinner */}
-      </div>
+      <section className="section">
+        <div className="container has-text-centered">
+          <div className="loader-wrapper">
+            <button
+              type="button"
+              className="button is-primary is-loading"
+              disabled
+              aria-label="Loading product details"
+            >
+              Loading
+            </button>
+          </div>
+          <p className="mt-4">Loading product details…</p>
+        </div>
+      </section>
     );
+  }
 
-  if (error)
+  if (loadError || !product) {
     return (
-      <div className="container has-text-centered mt-5">
-        <h1 className="title has-text-danger">{error}</h1>
-      </div>
+      <section className="section">
+        <div className="container has-text-centered">
+          <h1 className="title has-text-danger">{loadError || "Not found"}</h1>
+          <Link to="/products" className="button is-primary mt-4">
+            Back to products
+          </Link>
+        </div>
+      </section>
     );
+  }
+
+  const outOfStock = stock < 1;
 
   return (
-    <div className="container mt-5">
-      {product && (
+    <section className="section">
+      <div className="container">
+        <nav
+          className="breadcrumb techhub-breadcrumb-block"
+          aria-label="breadcrumbs"
+        >
+          <ul>
+            <li>
+              <Link to="/">Home</Link>
+            </li>
+            <li>
+              <Link to="/products">Products</Link>
+            </li>
+            <li className="is-active">
+              <span aria-current="page">{product.name}</span>
+            </li>
+          </ul>
+        </nav>
+
+        {orderError && (
+          <div className="notification is-danger is-light" role="alert">
+            <button
+              type="button"
+              className="delete"
+              aria-label="Dismiss"
+              onClick={() => setOrderError("")}
+            />
+            {orderError}
+          </div>
+        )}
+
+        {orderSuccess && (
+          <div className="notification is-success is-light" role="status">
+            Order placed successfully.{" "}
+            <Link to="/orders">View your orders</Link>.
+          </div>
+        )}
+
         <div className="columns is-centered">
-          {/* Product Image */}
           <div className="column is-half">
             <figure className="image is-square">
               <img
-                src={product.image || 'https://via.placeholder.com/500x500'}
+                src={product.image || "https://via.placeholder.com/500x500"}
                 alt={product.name}
                 style={{
-                  borderRadius: '8px',
-                  objectFit: 'contain',
-                  width: '100%',
+                  borderRadius: "8px",
+                  objectFit: "contain",
+                  width: "100%",
                 }}
               />
             </figure>
           </div>
 
-          {/* Product Details */}
           <div className="column is-half">
             <h1 className="title">{product.name}</h1>
-            <p className="subtitle is-4 has-text-primary">
-              Price: ${product.price.toFixed(2)}
-            </p>
-            <div className="box" style={{ fontSize: '1.1rem' }}>
-              {product.description}
-            </div>
-            <p className="has-text-grey-light">
-              Added on: {new Date(product.createdAt).toLocaleDateString()}
+            <p className="subtitle is-5 techhub-readable-muted">{product.brand}</p>
+            <p className="subtitle is-4 has-text-primary has-text-weight-semibold">
+              ${product.price.toFixed(2)}
             </p>
 
-            {/* Order Now Section */}
-            <div className="mt-4">
-              <label className="label">Quantity</label>
-              <div className="control">
-                <input
-                  type="number"
-                  className="input"
-                  value={quantity}
-                  min="1"
-                  onChange={(e) => setQuantity(parseInt(e.target.value, 10))}
-                />
+            <div className="tags mb-4">
+              <span className="tag is-info">{product.category}</span>
+              {outOfStock ? (
+                <span className="tag is-danger">Out of stock</span>
+              ) : stock <= 5 ? (
+                <span className="tag is-warning">Only {stock} left</span>
+              ) : (
+                <span className="tag is-success">{stock} in stock</span>
+              )}
+            </div>
+
+            {productForSpecs && (
+              <div className="box content is-small mb-4">
+                <h2 className="title is-6">Specifications</h2>
+                <ProductSpecs product={productForSpecs} />
+              </div>
+            )}
+
+            <div className="box" style={{ fontSize: "1.05rem" }}>
+              {product.description}
+            </div>
+            <p className="is-size-7 techhub-readable-muted">
+              Listed {new Date(product.createdAt).toLocaleDateString()}
+            </p>
+
+            <div className="mt-5">
+              <label className="label" htmlFor="product-qty">
+                Quantity
+              </label>
+              <div className="field has-addons">
+                <div className="control">
+                  <input
+                    id="product-qty"
+                    type="number"
+                    className="input"
+                    value={quantity}
+                    min={1}
+                    max={maxQty || 1}
+                    disabled={outOfStock}
+                    onChange={handleQuantityChange}
+                  />
+                </div>
+                <div className="control">
+                  <button
+                    type="button"
+                    className="button is-static"
+                    tabIndex={-1}
+                    aria-hidden="true"
+                  >
+                    max {maxQty || 0}
+                  </button>
+                </div>
               </div>
               <button
-                className="button is-primary mt-3"
+                type="button"
+                className={`button is-primary mt-3 ${submitting ? "is-loading" : ""}`}
                 onClick={handleOrderNow}
+                disabled={outOfStock || submitting}
               >
-                Order Now
+                Order now
               </button>
-              {orderSuccess && (
-                <p className="has-text-success mt-3">
-                  Order placed successfully!
-                </p>
-              )}
             </div>
           </div>
         </div>
-      )}
-    </div>
+      </div>
+    </section>
   );
 };
 

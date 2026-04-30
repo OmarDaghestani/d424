@@ -1,19 +1,19 @@
-import { useState, useEffect } from "react";
-import debounce from "lodash/debounce";
+import { useState } from "react";
 import PropTypes from "prop-types";
+import { useDebouncedCallback } from "../hooks/useDebouncedCallback";
 
-const SearchFilter = ({ onSearch, onCategoryChange, onSortChange }) => {
+const SearchFilter = ({
+  onSearch,
+  onCategoryChange,
+  onSortChange,
+  category,
+  sortBy,
+}) => {
   const [searchTerm, setSearchTerm] = useState("");
 
-  const debouncedSearch = debounce((term) => {
+  const debouncedSearch = useDebouncedCallback((term) => {
     onSearch(term);
   }, 300);
-
-  useEffect(() => {
-    return () => {
-      debouncedSearch.cancel();
-    };
-  }, []);
 
   const handleSearchChange = (e) => {
     const term = e.target.value;
@@ -26,15 +26,20 @@ const SearchFilter = ({ onSearch, onCategoryChange, onSortChange }) => {
       <div className="columns is-multiline is-mobile">
         <div className="column is-12-mobile is-6-tablet is-4-desktop">
           <div className="field">
+            <label className="is-sr-only" htmlFor="product-search">
+              Search products
+            </label>
             <div className="control has-icons-left">
               <input
+                id="product-search"
                 className="input"
-                type="text"
+                type="search"
                 placeholder="Search products..."
                 value={searchTerm}
                 onChange={handleSearchChange}
+                autoComplete="off"
               />
-              <span className="icon is-left">
+              <span className="icon is-left" aria-hidden="true">
                 <i className="fas fa-search"></i>
               </span>
             </div>
@@ -43,9 +48,16 @@ const SearchFilter = ({ onSearch, onCategoryChange, onSortChange }) => {
 
         <div className="column is-12-mobile is-6-tablet is-4-desktop">
           <div className="field">
+            <label className="is-sr-only" htmlFor="product-category">
+              Category
+            </label>
             <div className="control">
               <div className="select is-fullwidth">
-                <select onChange={(e) => onCategoryChange(e.target.value)}>
+                <select
+                  id="product-category"
+                  value={category}
+                  onChange={(e) => onCategoryChange(e.target.value)}
+                >
                   <option value="">All Categories</option>
                   <option value="CPU">CPUs</option>
                   <option value="GPU">Graphics Cards</option>
@@ -62,9 +74,16 @@ const SearchFilter = ({ onSearch, onCategoryChange, onSortChange }) => {
 
         <div className="column is-12-mobile is-6-tablet is-4-desktop">
           <div className="field">
+            <label className="is-sr-only" htmlFor="product-sort">
+              Sort by
+            </label>
             <div className="control">
               <div className="select is-fullwidth">
-                <select onChange={(e) => onSortChange(e.target.value)}>
+                <select
+                  id="product-sort"
+                  value={sortBy}
+                  onChange={(e) => onSortChange(e.target.value)}
+                >
                   <option value="">Sort By</option>
                   <option value="price-asc">Price: Low to High</option>
                   <option value="price-desc">Price: High to Low</option>
@@ -76,39 +95,6 @@ const SearchFilter = ({ onSearch, onCategoryChange, onSortChange }) => {
           </div>
         </div>
       </div>
-
-      <style>
-        {`
-          .filter-section {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            margin-bottom: 2rem;
-          }
-
-          .input, .select select {
-            border-radius: 4px;
-            border: 1px solid #dbdbdb;
-            transition: all 0.3s ease;
-          }
-
-          .input:focus, .select select:focus {
-            border-color: #3273dc;
-            box-shadow: 0 0 0 2px rgba(50,115,220,0.25);
-          }
-
-          .select:not(.is-multiple):not(.is-loading)::after {
-            border-color: #3273dc;
-          }
-
-          @media screen and (max-width: 768px) {
-            .column {
-              margin-bottom: 0.75rem;
-            }
-          }
-        `}
-      </style>
     </div>
   );
 };
@@ -117,6 +103,8 @@ SearchFilter.propTypes = {
   onSearch: PropTypes.func.isRequired,
   onCategoryChange: PropTypes.func.isRequired,
   onSortChange: PropTypes.func.isRequired,
+  category: PropTypes.string.isRequired,
+  sortBy: PropTypes.string.isRequired,
 };
 
 export default SearchFilter;

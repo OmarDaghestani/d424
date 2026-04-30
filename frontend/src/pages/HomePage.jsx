@@ -1,12 +1,16 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Hero from "../components/Hero";
-import Footer from "../components/Footer";
+import HomeSections from "../components/HomeSections";
 
 const HomePage = () => {
+  useEffect(() => {
+    document.title = "TechHub";
+  }, []);
+
   return (
     <div className="homepage">
       <Hero />
-      <Footer />
+      <HomeSections />
     </div>
   );
 };

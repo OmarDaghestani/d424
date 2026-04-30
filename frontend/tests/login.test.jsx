@@ -21,7 +21,7 @@ describe("LoginPage Component", () => {
   it("renders the login form", () => {
     expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /login/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /log in/i })).toBeInTheDocument();
   });
 
   it("updates input values when typed into", () => {
@@ -36,14 +36,14 @@ describe("LoginPage Component", () => {
   });
 
   it("disables the login button if inputs are empty", () => {
-    const loginButton = screen.getByRole("button", { name: /login/i });
+    const loginButton = screen.getByRole("button", { name: /log in/i });
     expect(loginButton).toBeDisabled();
   });
 
   it("enables the login button when inputs are filled", () => {
     const emailInput = screen.getByLabelText(/email/i);
     const passwordInput = screen.getByLabelText(/password/i);
-    const loginButton = screen.getByRole("button", { name: /login/i });
+    const loginButton = screen.getByRole("button", { name: /log in/i });
 
     fireEvent.change(emailInput, { target: { value: "test@example.com" } });
     fireEvent.change(passwordInput, { target: { value: "password123" } });
@@ -54,7 +54,7 @@ describe("LoginPage Component", () => {
   it("displays an error message if login fails", async () => {
     const emailInput = screen.getByLabelText(/email/i);
     const passwordInput = screen.getByLabelText(/password/i);
-    const loginButton = screen.getByRole("button", { name: /login/i });
+    const loginButton = screen.getByRole("button", { name: /log in/i });
 
     fireEvent.change(emailInput, { target: { value: "wrong@example.com" } });
     fireEvent.change(passwordInput, { target: { value: "wrongpassword" } });
@@ -72,7 +72,7 @@ describe("LoginPage Component", () => {
   it("stores token and redirects on successful login", async () => {
     const emailInput = screen.getByLabelText(/email/i);
     const passwordInput = screen.getByLabelText(/password/i);
-    const loginButton = screen.getByRole("button", { name: /login/i });
+    const loginButton = screen.getByRole("button", { name: /log in/i });
 
     fireEvent.change(emailInput, { target: { value: "test@example.com" } });
     fireEvent.change(passwordInput, { target: { value: "password123" } });
