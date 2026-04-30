@@ -1,55 +1,109 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1733618417379" clover="3.2.0">
-  <project timestamp="1733618417379" name="All files">
-    <metrics statements="43" coveredstatements="40" conditionals="19" coveredconditionals="13" methods="9" coveredmethods="9" elements="71" coveredelements="62" complexity="0" loc="43" ncloc="43" packages="1" files="2" classes="2"/>
-    <file name="LoginPage.jsx" path="C:\Users\odagh\Desktop\d424\frontend\src\pages\LoginPage.jsx">
-      <metrics statements="23" coveredstatements="20" conditionals="10" coveredconditionals="6" methods="4" coveredmethods="4"/>
-      <line num="5" count="1" type="cond" truecount="1" falsecount="1"/>
-      <line num="7" count="1" type="stmt"/>
-      <line num="8" count="15" type="stmt"/>
-      <line num="9" count="15" type="stmt"/>
-      <line num="10" count="15" type="stmt"/>
-      <line num="12" count="15" type="stmt"/>
-      <line num="14" count="15" type="stmt"/>
-      <line num="15" count="2" type="stmt"/>
-      <line num="16" count="2" type="stmt"/>
-      <line num="17" count="2" type="stmt"/>
-      <line num="23" count="1" type="stmt"/>
-      <line num="26" count="1" type="stmt"/>
-      <line num="28" count="1" type="stmt"/>
-      <line num="29" count="1" type="stmt"/>
-      <line num="30" count="1" type="stmt"/>
-      <line num="33" count="1" type="cond" truecount="1" falsecount="1"/>
-      <line num="34" count="1" type="stmt"/>
-      <line num="35" count="0" type="cond" truecount="0" falsecount="2"/>
-      <line num="36" count="0" type="stmt"/>
-      <line num="38" count="0" type="stmt"/>
-      <line num="43" count="15" type="stmt"/>
-      <line num="61" count="4" type="stmt"/>
-      <line num="77" count="4" type="stmt"/>
-    </file>
-    <file name="SignupPage.jsx" path="C:\Users\odagh\Desktop\d424\frontend\src\pages\SignupPage.jsx">
-      <metrics statements="20" coveredstatements="20" conditionals="9" coveredconditionals="7" methods="5" coveredmethods="5"/>
-      <line num="5" count="1" type="cond" truecount="1" falsecount="1"/>
-      <line num="7" count="1" type="stmt"/>
-      <line num="8" count="20" type="stmt"/>
-      <line num="9" count="20" type="stmt"/>
-      <line num="10" count="20" type="stmt"/>
-      <line num="11" count="20" type="stmt"/>
-      <line num="13" count="20" type="stmt"/>
-      <line num="15" count="20" type="stmt"/>
-      <line num="16" count="2" type="stmt"/>
-      <line num="17" count="2" type="stmt"/>
-      <line num="18" count="2" type="stmt"/>
-      <line num="24" count="1" type="stmt"/>
-      <line num="25" count="1" type="stmt"/>
-      <line num="26" count="1" type="stmt"/>
-      <line num="27" count="1" type="stmt"/>
-      <line num="29" count="1" type="cond" truecount="1" falsecount="1"/>
-      <line num="33" count="20" type="stmt"/>
-      <line num="51" count="4" type="stmt"/>
-      <line num="67" count="4" type="stmt"/>
-      <line num="83" count="4" type="stmt"/>
-    </file>
+<coverage generated="1777585357864" clover="3.2.0">
+  <project timestamp="1777585357865" name="All files">
+    <metrics statements="76" coveredstatements="58" conditionals="53" coveredconditionals="24" methods="15" coveredmethods="12" elements="144" coveredelements="94" complexity="0" loc="76" ncloc="76" packages="4" files="5" classes="5"/>
+    <package name="src">
+      <metrics statements="2" coveredstatements="2" conditionals="7" coveredconditionals="4" methods="0" coveredmethods="0"/>
+      <file name="config.js" path="C:\Users\odagh\Desktop\d424\frontend\src\config.js">
+        <metrics statements="2" coveredstatements="2" conditionals="7" coveredconditionals="4" methods="0" coveredmethods="0"/>
+        <line num="4" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="7" count="2" type="cond" truecount="3" falsecount="2"/>
+      </file>
+    </package>
+    <package name="src.hooks">
+      <metrics statements="6" coveredstatements="4" conditionals="4" coveredconditionals="3" methods="2" coveredmethods="2"/>
+      <file name="useDocumentTitle.js" path="C:\Users\odagh\Desktop\d424\frontend\src\hooks\useDocumentTitle.js">
+        <metrics statements="6" coveredstatements="4" conditionals="4" coveredconditionals="3" methods="2" coveredmethods="2"/>
+        <line num="3" count="2" type="stmt"/>
+        <line num="9" count="35" type="stmt"/>
+        <line num="10" count="12" type="cond" truecount="3" falsecount="1"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="14" count="12" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.pages">
+      <metrics statements="47" coveredstatements="44" conditionals="22" coveredconditionals="15" methods="9" coveredmethods="9"/>
+      <file name="LoginPage.jsx" path="C:\Users\odagh\Desktop\d424\frontend\src\pages\LoginPage.jsx">
+        <metrics statements="24" coveredstatements="21" conditionals="10" coveredconditionals="6" methods="4" coveredmethods="4"/>
+        <line num="8" count="1" type="stmt"/>
+        <line num="9" count="15" type="stmt"/>
+        <line num="11" count="15" type="stmt"/>
+        <line num="12" count="15" type="stmt"/>
+        <line num="13" count="15" type="stmt"/>
+        <line num="15" count="15" type="stmt"/>
+        <line num="17" count="15" type="stmt"/>
+        <line num="18" count="2" type="stmt"/>
+        <line num="19" count="2" type="stmt"/>
+        <line num="20" count="2" type="stmt"/>
+        <line num="25" count="1" type="stmt"/>
+        <line num="27" count="1" type="stmt"/>
+        <line num="28" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="30" count="1" type="stmt"/>
+        <line num="31" count="1" type="stmt"/>
+        <line num="32" count="1" type="stmt"/>
+        <line num="34" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="35" count="1" type="stmt"/>
+        <line num="36" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="37" count="0" type="stmt"/>
+        <line num="39" count="0" type="stmt"/>
+        <line num="44" count="15" type="stmt"/>
+        <line num="63" count="4" type="stmt"/>
+        <line num="80" count="4" type="stmt"/>
+      </file>
+      <file name="SignupPage.jsx" path="C:\Users\odagh\Desktop\d424\frontend\src\pages\SignupPage.jsx">
+        <metrics statements="23" coveredstatements="23" conditionals="12" coveredconditionals="9" methods="5" coveredmethods="5"/>
+        <line num="8" count="1" type="stmt"/>
+        <line num="9" count="20" type="stmt"/>
+        <line num="11" count="20" type="stmt"/>
+        <line num="12" count="20" type="stmt"/>
+        <line num="13" count="20" type="stmt"/>
+        <line num="14" count="20" type="stmt"/>
+        <line num="16" count="20" type="stmt"/>
+        <line num="18" count="20" type="stmt"/>
+        <line num="19" count="2" type="stmt"/>
+        <line num="20" count="2" type="stmt"/>
+        <line num="21" count="2" type="stmt"/>
+        <line num="27" count="1" type="stmt"/>
+        <line num="28" count="1" type="stmt"/>
+        <line num="30" count="1" type="cond" truecount="2" falsecount="1"/>
+        <line num="31" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="33" count="1" type="stmt"/>
+        <line num="34" count="1" type="stmt"/>
+        <line num="35" count="1" type="stmt"/>
+        <line num="37" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="41" count="20" type="stmt"/>
+        <line num="60" count="4" type="stmt"/>
+        <line num="77" count="4" type="stmt"/>
+        <line num="94" count="4" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.utils">
+      <metrics statements="21" coveredstatements="8" conditionals="20" coveredconditionals="2" methods="4" coveredmethods="1"/>
+      <file name="displayName.js" path="C:\Users\odagh\Desktop\d424\frontend\src\utils\displayName.js">
+        <metrics statements="21" coveredstatements="8" conditionals="20" coveredconditionals="2" methods="4" coveredmethods="1"/>
+        <line num="1" count="2" type="stmt"/>
+        <line num="2" count="2" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="7" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="9" count="0" type="stmt"/>
+        <line num="15" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="16" count="1" type="stmt"/>
+        <line num="17" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="18" count="1" type="stmt"/>
+        <line num="19" count="1" type="stmt"/>
+        <line num="20" count="1" type="stmt"/>
+        <line num="29" count="0" type="stmt"/>
+        <line num="30" count="0" type="stmt"/>
+        <line num="31" count="0" type="stmt"/>
+        <line num="41" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="42" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="43" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="44" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="45" count="0" type="cond" truecount="0" falsecount="6"/>
+        <line num="46" count="0" type="stmt"/>
+      </file>
+    </package>
   </project>
 </coverage>

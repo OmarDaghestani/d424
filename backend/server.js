@@ -13,13 +13,16 @@ await db();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Serve static files
-const __dirname = path.resolve();
-app.use('/images', express.static(path.join(__dirname, 'public/images')));
+// Stripe webhook needs raw body
+app.use('/api/payments/webhook', express.raw({ type: 'application/json' }));
 
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Serve static files
+const __dirname = path.resolve();
+app.use('/images', express.static(path.join(__dirname, 'public/images')));
 
 // Routes
 app.use(routes); // Register routes from `routes/index.js`

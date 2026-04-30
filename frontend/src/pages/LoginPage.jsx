@@ -1,15 +1,18 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
-
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+import { useNavigate, Link } from "react-router-dom";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
+import { API_URL } from "../config";
+import { setStoredDisplayName } from "../utils/displayName";
 
 const LoginPage = ({ setIsAuthenticated }) => {
+  useDocumentTitle("Log in");
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const navigate = useNavigate(); // Initialize the navigate function
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,20 +22,18 @@ const LoginPage = ({ setIsAuthenticated }) => {
         password,
       });
 
-      // Extract the token from the response
-      const { token } = response.data;
+      const { token, name } = response.data;
 
-      // Store the token in localStorage
       localStorage.setItem("token", token);
+      if (name) setStoredDisplayName(name);
 
       setIsAuthenticated(true);
-      setError(""); // Clear error on success
-      navigate("/"); // Redirect to the homepage
-    } catch (error) {
-      // Enhanced error handling
-      if (error.response?.data?.message) {
-        setError(error.response.data.message); // Server-side error message
-      } else if (error.message === "Network Error") {
+      setError("");
+      navigate("/");
+    } catch (err) {
+      if (err.response?.data?.message) {
+        setError(err.response.data.message);
+      } else if (err.message === "Network Error") {
         setError("Network error. Please try again.");
       } else {
         setError("An unexpected error occurred. Please try again.");
@@ -41,67 +42,69 @@ const LoginPage = ({ setIsAuthenticated }) => {
   };
 
   return (
-    <div className="container mt-5">
-      <div className="columns is-centered">
-        <div className="column is-one-third">
-          <h1 className="title has-text-centered">Login</h1>
-          <form className="box" onSubmit={handleSubmit}>
-            <div className="field">
-              <label className="label" htmlFor="email">
-                Email
-              </label>
-              <div className="control">
-                <input
-                  id="email"
-                  className="input"
-                  type="email"
-                  placeholder="Enter your email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
+    <section className="section">
+      <div className="container">
+        <div className="columns is-centered">
+          <div className="column is-one-third">
+            <h1 className="title has-text-centered">Log in</h1>
+            <form className="box" onSubmit={handleSubmit} noValidate>
+              <div className="field">
+                <label className="label" htmlFor="email">
+                  Email
+                </label>
+                <div className="control">
+                  <input
+                    id="email"
+                    className="input"
+                    type="email"
+                    placeholder="Enter your email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    autoComplete="email"
+                  />
+                </div>
               </div>
-            </div>
-            <div className="field">
-              <label className="label" htmlFor="password">
-                Password
-              </label>
-              <div className="control">
-                <input
-                  id="password"
-                  className="input"
-                  type="password"
-                  placeholder="Enter your password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
+              <div className="field">
+                <label className="label" htmlFor="password">
+                  Password
+                </label>
+                <div className="control">
+                  <input
+                    id="password"
+                    className="input"
+                    type="password"
+                    placeholder="Enter your password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    autoComplete="current-password"
+                  />
+                </div>
               </div>
-            </div>
-            {error && (
-              <p
-                className="has-text-danger has-text-centered"
-                role="alert" // Add role for accessibility
-              >
-                {error}
-              </p>
-            )}
-            <div className="field">
-              <button
-                className="button is-primary is-fullwidth"
-                type="submit"
-                disabled={!email || !password} // Disable button if inputs are empty
-              >
-                Login
-              </button>
-            </div>
-          </form>
-          <p className="has-text-centered">
-            Don’t have an account? <a href="/signup">Sign up here</a>
-          </p>
+              {error && (
+                <p className="has-text-danger has-text-centered" role="alert">
+                  {error}
+                </p>
+              )}
+              <div className="field">
+                <button
+                  className="button is-primary is-fullwidth"
+                  type="submit"
+                  disabled={!email || !password}
+                >
+                  Log in
+                </button>
+              </div>
+            </form>
+            <p className="has-text-centered">
+              Don&apos;t have an account?{" "}
+              <Link to="/signup">Create an account</Link>
+            </p>
+          </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

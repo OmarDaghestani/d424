@@ -1,12 +1,12 @@
-import React from 'react';
-import OrderList from '../components/OrderList';
+import React from "react";
+import OrderList from "../components/OrderList";
 
-const OrdersPage = () => {
-    return (
-        <div className="orders-page">
-            <OrderList />
-        </div>
-    );
+const OrderPage = () => {
+  return (
+    <div className="orders-page">
+      <OrderList />
+    </div>
+  );
 };
 
-export default OrdersPage;
+export default OrderPage;
