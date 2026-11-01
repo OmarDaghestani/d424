@@ -15,7 +15,13 @@ const userSchema = mongoose.Schema(
     password: {
       type: String,
       required: true,
-    }
+    },
+    // Never accepted from request bodies; promote admins directly in the database.
+    role: {
+      type: String,
+      enum: ["customer", "admin"],
+      default: "customer",
+    },
   },
   {
     timestamps: true, // Automatically manage createdAt and updatedAt fields
@@ -30,11 +36,12 @@ userSchema.methods.matchPassword = async function (enteredPassword) {
 // Hash password before saving user
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
-    next();
+    return next();
   }
 
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
+  next();
 });
 
 const User = mongoose.model("User", userSchema);
