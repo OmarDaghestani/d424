@@ -88,8 +88,9 @@ const SignupPage = ({ setIsAuthenticated }) => {
                     id="password"
                     className="input"
                     type="password"
-                    placeholder="Enter your password"
+                    placeholder="At least 8 characters"
                     required
+                    minLength={8}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     autoComplete="new-password"

@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import stripe from '../config/stripe.js';
 import Order from '../models/Order.js';
 import Payment from '../models/Payment.js';
@@ -5,6 +6,10 @@ import Payment from '../models/Payment.js';
 export const createPaymentIntent = async (req, res) => {
   try {
     const { orderId } = req.body;
+
+    if (!mongoose.isValidObjectId(orderId)) {
+      return res.status(400).json({ message: 'Invalid order ID' });
+    }
 
     // Find the order
     const order = await Order.findById(orderId);
@@ -40,8 +45,8 @@ export const createPaymentIntent = async (req, res) => {
       clientSecret: paymentIntent.client_secret,
     });
   } catch (error) {
-    console.error('Payment Intent Error:', error);
-    res.status(500).json({ message: 'Error creating payment intent', error });
+    console.error('Payment Intent Error:', error.message);
+    res.status(500).json({ message: 'Error creating payment intent' });
   }
 };
 
@@ -49,8 +54,6 @@ export const handleWebhook = async (req, res) => {
   const sig = req.headers['stripe-signature'];
 
   try {
-    console.log('Received webhook. Signature:', sig);
-    
     const event = stripe.webhooks.constructEvent(
       req.body,
       sig,
@@ -78,8 +81,7 @@ export const handleWebhook = async (req, res) => {
     res.json({ received: true });
   } catch (err) {
     console.error('Webhook Error:', err.message);
-    console.error('Request body:', req.body);
-    res.status(400).send(`Webhook Error: ${err.message}`);
+    res.status(400).send('Webhook Error');
   }
 };
 

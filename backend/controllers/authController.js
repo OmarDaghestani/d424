@@ -1,10 +1,24 @@
 import User from "../models/User.js";
-import bcrypt from "bcrypt";
 import generateToken from "../utils/generateToken.js";
+
+const isNonEmptyString = (value) =>
+  typeof value === "string" && value.trim().length > 0;
+
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 // Signup user
 export const signup = async (req, res) => {
   const { name, email, password } = req.body;
+
+  if (!isNonEmptyString(name) || !isNonEmptyString(email) || !isNonEmptyString(password)) {
+    return res.status(400).json({ message: "Name, email, and password are required" });
+  }
+  if (!EMAIL_PATTERN.test(email)) {
+    return res.status(400).json({ message: "Please enter a valid email address" });
+  }
+  if (password.length < 8) {
+    return res.status(400).json({ message: "Password must be at least 8 characters" });
+  }
 
   try {
     const existingUser = await User.findOne({ email });
@@ -12,7 +26,8 @@ export const signup = async (req, res) => {
       return res.status(400).json({ message: "User already exists" });
     }
 
-    const user = await User.create({ name, email, password }); // Do not hash the password here
+    // The model hashes the password; role is never taken from the request
+    const user = await User.create({ name: name.trim(), email, password });
 
     res.status(201).json({
       _id: user.id,
@@ -21,48 +36,33 @@ export const signup = async (req, res) => {
       token: generateToken(user.id),
     });
   } catch (error) {
-    res.status(500).json({ message: "Failed to register user", error });
+    console.error("Signup Error:", error.message);
+    res.status(500).json({ message: "Failed to register user" });
   }
 };
 
-
-// Login user
 // Login user
 export const login = async (req, res) => {
   const { email, password } = req.body;
 
+  if (!isNonEmptyString(email) || !isNonEmptyString(password)) {
+    return res.status(400).json({ message: "Email and password are required" });
+  }
+
   try {
-    // Find user by email
     const user = await User.findOne({ email });
-    console.log("User Found:", user); // Log user data
-    if (!user) {
-      return res.status(401).json({ message: "Invalid email or password" }); // User not found
+    if (!user || !(await user.matchPassword(password))) {
+      return res.status(401).json({ message: "Invalid email or password" });
     }
 
-    // Compare password
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    console.log("Password Valid:", isPasswordValid); // Log password comparison result
-    console.log('Input Password:', password);
-    console.log('Stored Hashed Password:', user.password);
-
-    if (!isPasswordValid) {
-      return res.status(401).json({ message: "Invalid email or password" }); // Password mismatch
-    }
-
-    // If email and password are correct, return user and token
     res.status(200).json({
       _id: user.id,
       name: user.name,
       email: user.email,
       token: generateToken(user.id),
     });
-
-    console.log("Password Input:", password);
-    console.log("Stored Password Hash:", user.password);
-    console.log("Password Valid:", isPasswordValid);  
-
   } catch (error) {
-    console.error("Login Error:", error); // Log any other errors
-    res.status(500).json({ message: "Failed to login user", error });
+    console.error("Login Error:", error.message);
+    res.status(500).json({ message: "Failed to login user" });
   }
 };
