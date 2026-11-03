@@ -93,7 +93,9 @@ export const createPaymentIntent = async (req, res) => {
     const existing = await Payment.findOne({ order: order._id, status: 'pending' });
     if (existing) {
       const intent = await stripe.paymentIntents.retrieve(existing.stripePaymentIntentId);
-      if (intent.amount === amount && !['canceled', 'succeeded'].includes(intent.status)) {
+      const cardOnly =
+        intent.payment_method_types?.length === 1 && intent.payment_method_types[0] === 'card';
+      if (intent.amount === amount && cardOnly && !['canceled', 'succeeded'].includes(intent.status)) {
         return res.status(200).json({ clientSecret: intent.client_secret, amount });
       }
     }
@@ -102,13 +104,14 @@ export const createPaymentIntent = async (req, res) => {
       {
         amount,
         currency: 'usd',
-        automatic_payment_methods: { enabled: true },
+        // Card only: keeps the demo simple and avoids redirect-based methods
+        payment_method_types: ['card'],
         metadata: {
           orderId: order._id.toString(),
           userId: req.user._id.toString(),
         },
       },
-      { idempotencyKey: `order-${order._id}-${amount}` }
+      { idempotencyKey: `order-${order._id}-${amount}-card` }
     );
 
     await Payment.updateOne(
