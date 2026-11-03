@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import { API_URL } from "../config";
+import { safeRedirect } from "../utils/safeRedirect";
 import { setStoredDisplayName } from "../utils/displayName";
 
 const SignupPage = ({ setIsAuthenticated }) => {
@@ -14,6 +15,8 @@ const SignupPage = ({ setIsAuthenticated }) => {
   const [error, setError] = useState("");
 
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const afterAuth = safeRedirect(searchParams.get("next"));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -32,7 +35,7 @@ const SignupPage = ({ setIsAuthenticated }) => {
 
       setIsAuthenticated(true);
       setError("");
-      navigate("/");
+      navigate(afterAuth);
     } catch (err) {
       setError(err.response?.data?.message || "An error occurred");
     }

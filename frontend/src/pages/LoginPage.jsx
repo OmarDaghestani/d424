@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import { API_URL } from "../config";
+import { safeRedirect } from "../utils/safeRedirect";
 import { setStoredDisplayName } from "../utils/displayName";
 
 const LoginPage = ({ setIsAuthenticated }) => {
@@ -13,6 +14,8 @@ const LoginPage = ({ setIsAuthenticated }) => {
   const [error, setError] = useState("");
 
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const afterAuth = safeRedirect(searchParams.get("next"));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,7 +32,7 @@ const LoginPage = ({ setIsAuthenticated }) => {
 
       setIsAuthenticated(true);
       setError("");
-      navigate("/");
+      navigate(afterAuth);
     } catch (err) {
       if (err.response?.data?.message) {
         setError(err.response.data.message);

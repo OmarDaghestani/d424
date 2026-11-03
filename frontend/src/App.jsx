@@ -4,6 +4,8 @@ import HomePage from "./pages/HomePage";
 import ProductsPage from "./pages/ProductsPage";
 import ProductPage from "./pages/ProductPage";
 import OrderPage from "./pages/OrderPage";
+import CheckoutPage from "./pages/CheckoutPage";
+import CheckoutCompletePage from "./pages/CheckoutCompletePage";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import ProfilePage from "./pages/ProfilePage";
@@ -42,6 +44,8 @@ const App = () => {
             }
           />
           <Route path="/orders" element={<OrderPage />} />
+          <Route path="/checkout" element={<CheckoutPage />} />
+          <Route path="/checkout/complete" element={<CheckoutCompletePage />} />
           <Route
             path="/about"
             element={
