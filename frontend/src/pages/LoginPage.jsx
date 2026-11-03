@@ -16,6 +16,8 @@ const LoginPage = ({ setIsAuthenticated }) => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const afterAuth = safeRedirect(searchParams.get("next"));
+  // Carry the return path over if the shopper switches to sign-up instead
+  const nextQuery = afterAuth !== "/" ? `?next=${encodeURIComponent(afterAuth)}` : "";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -102,7 +104,7 @@ const LoginPage = ({ setIsAuthenticated }) => {
             </form>
             <p className="has-text-centered">
               Don&apos;t have an account?{" "}
-              <Link to="/signup">Create an account</Link>
+              <Link to={`/signup${nextQuery}`}>Create an account</Link>
             </p>
           </div>
         </div>
