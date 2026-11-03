@@ -116,7 +116,7 @@ const OrderList = () => {
                           ? "Delivered"
                           : order.isPaid
                             ? "Paid"
-                            : "Pending"}
+                            : "Awaiting payment"}
                       </td>
                     </tr>
                   ))}
@@ -142,7 +142,7 @@ const OrderList = () => {
                           ? "Delivered"
                           : order.isPaid
                             ? "Paid"
-                            : "Pending"}
+                            : "Awaiting payment"}
                       </span>
                     </div>
                   </div>

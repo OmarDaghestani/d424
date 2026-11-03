@@ -9,6 +9,8 @@ export default defineConfig(({ mode }) => {
       __APP_API_URL__: JSON.stringify(
         env.VITE_API_URL || "http://localhost:5000"
       ),
+      // Publishable (pk_...) key only — safe to ship to the browser
+      __APP_STRIPE_PK__: JSON.stringify(env.VITE_STRIPE_PUBLISHABLE_KEY || ""),
     },
   };
 });

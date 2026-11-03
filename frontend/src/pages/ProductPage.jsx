@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { fetchProductById } from "../services/productService";
-import { createOrder } from "../services/orderService";
 import { ProductSpecs } from "../components/ProductSpecs";
 import { useDocumentTitle } from "../hooks/useDocumentTitle";
 
@@ -12,13 +11,11 @@ const formatSpecifications = (specs) => {
 
 const ProductPage = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState("");
-  const [orderError, setOrderError] = useState("");
   const [quantity, setQuantity] = useState(1);
-  const [orderSuccess, setOrderSuccess] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
 
   const productForSpecs = useMemo(() => {
     if (!product) return null;
@@ -32,8 +29,6 @@ const ProductPage = () => {
     const loadProduct = async () => {
       setLoading(true);
       setLoadError("");
-      setOrderError("");
-      setOrderSuccess(false);
 
       try {
         const data = await fetchProductById(id);
@@ -66,45 +61,9 @@ const ProductPage = () => {
     setQuantity(clampQuantity(e.target.value));
   };
 
-  const handleOrderNow = async () => {
+  const handleBuyNow = () => {
     if (!product || stock < 1) return;
-    setOrderError("");
-    setOrderSuccess(false);
-    setSubmitting(true);
-
-    try {
-      const qty = clampQuantity(quantity);
-      const orderData = {
-        orderItems: [
-          {
-            name: product.name,
-            quantity: qty,
-            price: product.price,
-            product: product._id,
-          },
-        ],
-        shippingAddress: {
-          address: "123 Main St",
-          city: "Springfield",
-          postalCode: "12345",
-          country: "USA",
-        },
-        paymentMethod: "PayPal",
-        totalPrice: qty * product.price,
-      };
-
-      await createOrder(orderData);
-      setOrderSuccess(true);
-    } catch (err) {
-      console.error("Failed to create order:", err);
-      setOrderError(
-        err?.response?.data?.message ||
-          err?.message ||
-          "Failed to create order. Please sign in and try again."
-      );
-    } finally {
-      setSubmitting(false);
-    }
+    navigate(`/checkout?product=${product._id}&qty=${clampQuantity(quantity)}`);
   };
 
   if (loading) {
@@ -161,25 +120,6 @@ const ProductPage = () => {
             </li>
           </ul>
         </nav>
-
-        {orderError && (
-          <div className="notification is-danger is-light" role="alert">
-            <button
-              type="button"
-              className="delete"
-              aria-label="Dismiss"
-              onClick={() => setOrderError("")}
-            />
-            {orderError}
-          </div>
-        )}
-
-        {orderSuccess && (
-          <div className="notification is-success is-light" role="status">
-            Order placed successfully.{" "}
-            <Link to="/orders">View your orders</Link>.
-          </div>
-        )}
 
         <div className="columns is-centered">
           <div className="column is-half">
@@ -258,11 +198,11 @@ const ProductPage = () => {
               </div>
               <button
                 type="button"
-                className={`button is-primary mt-3 ${submitting ? "is-loading" : ""}`}
-                onClick={handleOrderNow}
-                disabled={outOfStock || submitting}
+                className="button is-primary mt-3"
+                onClick={handleBuyNow}
+                disabled={outOfStock}
               >
-                Order now
+                Buy now
               </button>
             </div>
           </div>
