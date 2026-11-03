@@ -8,8 +8,10 @@ import { confirmPayment, createPaymentIntent } from "../services/paymentService"
 import { STRIPE_PUBLISHABLE_KEY } from "../config";
 import { useDocumentTitle } from "../hooks/useDocumentTitle";
 
-const stripePromise = STRIPE_PUBLISHABLE_KEY ? loadStripe(STRIPE_PUBLISHABLE_KEY) : null;
+// Portfolio demo: only ever load Stripe with a test-mode key, so a live key
+// configured by mistake can't turn this into a real store.
 const isTestMode = STRIPE_PUBLISHABLE_KEY.startsWith("pk_test_");
+const stripePromise = isTestMode ? loadStripe(STRIPE_PUBLISHABLE_KEY) : null;
 
 const EMPTY_ADDRESS = { address: "", city: "", postalCode: "", country: "" };
 
@@ -18,12 +20,11 @@ const errorMessage = (err, fallback) =>
 
 const formatMoney = (amount) => `$${Number(amount).toFixed(2)}`;
 
-function TestModeBanner() {
-  if (!isTestMode) return null;
+function DemoBanner() {
   return (
     <div className="notification is-info is-light">
-      <strong>Demo store — no real charges.</strong> Pay with test card{" "}
-      <code>4242 4242 4242 4242</code>, any future expiry, and any CVC.
+      <strong>Portfolio demo — no real charges, nothing ships.</strong> Pay with Stripe&apos;s test
+      card <code>4242 4242 4242 4242</code>, any future expiry, and any CVC.
     </div>
   );
 }
@@ -283,7 +284,7 @@ const CheckoutPage = () => {
     <section className="section">
       <div className="container">
         <h1 className="title">Checkout</h1>
-        <TestModeBanner />
+        <DemoBanner />
 
         {!stripePromise && (
           <div className="notification is-warning is-light">
